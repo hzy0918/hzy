@@ -1,0 +1,563 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>三丽鸥 Sanrio</title>
+<link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css" />
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Microsoft YaHei", sans-serif;
+}
+.nav {
+    background-color: #FFC2E2;
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+.nav-container {
+    width: 90%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.logo {
+    color: #FF2E9F;
+    font-size: 30px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-shadow: 
+        0 2px 0 #fff,
+        2px 0 0 #fff,
+        -2px 0 0 #fff,
+        0 -2px 0 #fff,
+        1px 1px 3px rgba(255, 46, 159, 0.8),
+        4px 4px 5px rgba(255, 194, 226, 0.6);
+}
+.logo img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+}
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 35px;
+    align-items: center;
+    /* 关键：给导航菜单加 z-index，避免被遮挡 */
+    z-index: 1000;
+}
+.nav-menu > li {
+    /* 每个导航项单独定位，确保下拉菜单不影响其他项 */
+    position: relative;
+}
+.nav-menu a {
+    color: #555;
+    text-decoration: none;
+    font-size: 17px;
+    font-weight: 500;
+    transition: all 0.3s;
+    padding: 8px 12px;
+    border-radius: 20px;
+    display: inline-block; /* 确保点击区域完整 */
+}
+.nav-menu a:hover {
+    color: #fff;
+    background-color: #FF2E9F;
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(255, 46, 159, 0.3);
+}
+
+/* 二级菜单容器（修复hover显示核心） */
+.nav-menu .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    /* 初始状态：偏移+透明+隐藏 */
+    transform: translateX(-50%) translateY(10px); /* 加Y轴偏移，过渡更自然 */
+    opacity: 0;
+    visibility: hidden;
+    background: #FFF5F8;
+    border: 2px solid #FF2E9F;
+    border-radius: 15px;
+    padding: 10px 0;
+    min-width: 120px;
+    list-style: none;
+    z-index: 9999;
+    /* 过渡要包含transform，否则hover位移没动画 */
+    transition: all 0.3s ease; /* 替换成all，覆盖opacity/visibility/transform */
+    box-shadow: 0 4px 12px rgba(255, 46, 159, 0.2);
+}
+
+/* 悬停首页显示菜单（必须复位transform） */
+.nav-menu > li:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0); /* 复位Y轴偏移，菜单显示 */
+}
+
+/* 心愿墙字体+基础样式（补全缺失属性） */
+.dropdown-menu li a {
+    display: block; /* 必加！否则padding/居中无效 */
+    padding: 8px 15px; /* 必加！保证点击区域 */
+    font-size: 16px;
+    font-family: "微软雅黑", "宋体", cursive;
+    font-weight: bold;
+    color: #FF1493;
+    font-style: italic;
+    letter-spacing: 1px;
+    text-align: center; /* 文字居中 */
+    text-decoration: none; /* 取消下划线 */
+    border-radius: 0;
+    /* 强制取消父级a标签的hover样式干扰 */
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* 心愿墙hover样式 */
+.dropdown-menu li a:hover {
+    background: #FFE6EF;
+    color: #FF1493;
+}
+.swiper {
+    width: 100%;
+    height: 700px;
+    margin: 20px 0;
+    overflow:hidden;
+}
+.swiper-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #FFF0F7;
+    height:700px;
+}
+.swiper-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.swiper-button-prev, .swiper-button-next {
+    color: #FF2E9F;
+    background: white; 
+    width: 40px; 
+    height: 40px;
+    border-radius: 50%;
+}
+.swiper-button-prev::after, .swiper-button-next::after {
+    color: #FF2E9F;
+    font-size: 16px;
+}
+.swiper-button-prev:hover, .swiper-button-next:hover {
+    transform: scale(1.2); 
+    transition: transform 0.2s; 
+}
+.swiper-pagination-bullet-active {
+    background: #FF2E9F;
+}
+.container {
+    width: 90%;
+    margin: 0 auto;
+    padding: 20px 0;
+}
+.sanrio-intro {
+    background-color: #FFF5FA;
+    padding: 30px;
+    border-radius: 10px;
+    margin-bottom: 40px;
+}
+.sanrio-intro h2 {
+    color: #FF2E9F;
+    margin-bottom: 15px;
+    font-size: 28px;
+}
+.sanrio-intro p {
+    line-height: 1.8;
+    color: #666;
+    margin-bottom: 10px;
+}
+.sanrio-character-overview {
+    width: 90%;
+    margin: 0 auto 50px;
+    padding: 25px;
+    border: 4px solid #FF2E9F;
+    border-radius: 20px;
+    background-color: #FDF2F8;
+    box-shadow: 0 5px 15px rgba(255, 46, 159, 0.1);
+}
+.sanrio-media-section {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    margin-top: 20px;
+}
+.media-img {
+    flex: 2;
+    min-width: 300px;
+}
+.media-img img {
+    width: 100%;
+    border-radius: 10px;
+    border: 3px solid #FF2E9F;
+}
+.media-right {
+    flex: 1;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.img-box {
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 3px solid #FF2E9F;
+}
+.img-box img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+.video-box {
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 3px solid #FF2E9F;
+}
+.video-box video {
+    width: 100%;
+    background-color: #ffe6f2;
+}
+video:-webkit-media-controls-panel {
+    background-color: #FFC2E2;
+}
+.popular-role {
+    width: 90%;
+    margin: 0 auto 40px;
+    padding: 25px;
+    border: 4px solid #ff1493;
+    border-radius: 20px;
+    background-color: #FFF0F7;
+    box-shadow: 0 5px 15px rgba(255, 20, 147, 0.1);
+}
+.characters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+.character-card {
+    text-align: center;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 10px;
+    transition: transform 0.3s;
+    border: 2px solid #FFC2E2;
+}
+.character-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 10px rgba(255, 194, 226, 0.3);
+}
+.character-card img {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+.character-card h3 {
+    color: #FF2E9F;
+    font-size: 18px;
+}
+.back-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    background-color: #FF2E9F;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    display: none;
+    transition: all 0.3s;
+    z-index: 999;
+}
+.back-to-top:hover {
+    transform: scale(1.1);
+    background-color: #ff1493;
+}
+.toggle-checkbox {
+  display: none;
+}
+.full-text {
+  display: none;
+  margin: 10px 0 0;
+}
+.toggle-checkbox:checked ~ .full-text {
+  display: block;
+}
+.toggle-checkbox:checked ~ .toggle-btn::before {
+  content: "收起";
+}
+.toggle-btn::before {
+  content: "点击";
+}
+.toggle-btn {
+  display: inline-block;
+  background-color: #FF2E9F;
+  color: #fff;
+  padding: 8px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s;
+}
+.toggle-btn:hover {
+  background-color: #ff1493;
+}
+#story {
+  scroll-margin-top: 150px;
+}
+#family {
+  scroll-margin-top: 150px;
+}
+</style>
+</head>
+<body>
+<nav class="nav">
+    <div class="nav-container">
+        <div class="logo"><img src="tupian28.jpg" alt="三丽鸥图标">Sanrio 三丽鸥</div>
+        <ul class="nav-menu">
+            <!-- 首页 + 心愿墙二级菜单 -->
+            <li>
+                <a href="#">首页</a>
+                <ul class="dropdown-menu">
+                   <li><a href="xinyuan.html">心愿墙</a></li>
+                </ul>
+            </li>
+            <li><a href="#story">起源故事</a></li>
+            <li><a href="#family">家庭成员</a></li>
+            <li><a href="lianxi.html" target="_blank">联系我们</a></li>
+            <li><a href="denglu.html" target="_blank">登录</a></li>
+            <li><a href="zhuce.html" target="_blank">注册</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="swiper mySwiper">
+    <div class="swiper-wrapper">
+        <div class="swiper-slide">
+            <img src="tupian1.jpg" alt="三丽鸥角色合集" />
+        </div>
+        <div class="swiper-slide">
+            <img src="tupian2.jpg" alt="三丽鸥合照" />
+        </div>
+        <div class="swiper-slide">
+            <img src="tupian5.jpg" alt="三丽鸥大合照" />
+        </div>
+        <div class="swiper-slide">
+            <img src="tupian6.jpg" alt="三丽鸥夜晚" />
+        </div>
+        <div class="swiper-slide">
+            <img src="tupian8.jpg" alt="三丽鸥夜晚" />
+        </div>
+    </div>
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-pagination"></div>
+</div>
+
+<div class="container">
+    <div class="sanrio-intro">
+    <div id="story" class="origin-story">
+        <h2>三丽鸥来源</h2>
+        </div>
+         <input type="checkbox" id="toggleText" class="toggle-checkbox">
+        <p>三丽鸥是日本一家以卡通形象为主的企业，成立于1960年代初，当时的日本正处于经济快速发展的时期，同时，电视媒体也得到了空前的普及，这为卡通发展提供了巨大的市场和机会。三丽鸥就是在这个背景下诞生的。</p >
+         <p class="full-text">1.核心品牌与角色
+Sanrio最著名的角色是Hello Kitty（凯蒂猫），诞生于1974年，已成为全球流行文化的标志。其他热门角色包括：
+- My Melody（美乐蒂）
+- Cinnamoroll（玉桂狗）
+- Pompompurin（布丁狗）
+- Kuromi（酷洛米）
+- Little Twin Stars（双子星）
+- Aggretsuko（角落小伙伴/冲吧烈子）
+每个角色都有独特的性格和背景故事，覆盖不同年龄层和审美偏好。
+2.业务范围
+-商品销售
+Sanrio的产品涵盖文具、服饰、家居用品、美妆、玩具等，通过与全球品牌联名（如UNIQLO、MAC化妆品等）扩大影响力。
+-主题体验
+- Sanrio Puroland（东京室内主题乐园）
+- Harmonyland（九州主题乐园）
+-内容创作
+推出动画、电影（如《Hello Kitty的童话世界》）、游戏和音乐，角色Aggretsuko还衍生出Netflix原创动画。
+-授权合作
+与餐饮、科技、时尚等领域品牌合作，例如与航空公司推出主题航班、与运动品牌联名鞋款等。
+3.文化影响
+- 全球化：Hello Kitty是日本“可爱文化”（Kawaii Culture）的代表，曾被任命为日本旅游大使。
+- 粉丝群体：从儿童到成年人，尤其吸引女性消费者，近年通过潮流化设计拓展男性市场。
+- 社会公益：参与环保、教育等慈善项目，传递积极价值观。</p >
+  <label for="toggleText" class="toggle-btn">查看更多</label>
+</div>
+    <div class="sanrio-character-overview">
+        <h2 style="color: #FF2E9F; font-size: 28px;">三丽鸥角色概览</h2>
+        <div class="sanrio-media-section">
+            <div class="media-img">
+                <img src="tipian9.jpg" alt="三丽鸥角色互动场景">
+            </div>
+            <div class="media-right">
+                <div class="img-box">
+                    <img src="tupian27.jpg" alt="三丽鸥装饰" onerror="this.src='https://picsum.photos/500/150?sanrio'">
+                    <img src="tupian7.jpg" alt="三丽鸥装饰" onerror="this.src='https://picsum.photos/500/150?sanrio'">
+                    <img src="tupian29.jpg" alt="三丽鸥装饰" onerror="this.src='https://picsum.photos/500/150?sanrio'">
+                    <img src="tupian30.jpg" alt="三丽鸥装饰" onerror="this.src='https://picsum.photos/500/150?sanrio'">
+                </div>
+                <div class="video-box">
+                    <video controls poster="tupian3.jpg" width="100%">
+                        <source src="sanliou1.mp4" type="video/mp4">
+                        你的浏览器不支持视频播放，请更换浏览器后重试。
+                    </video>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="popular-role">
+    <div id="family" class="family-members">
+        <h2 style="color: #FF2E9F; font-size: 28px;">人气角色</h2>
+        </div>
+        <div class="characters">
+            <div class="character-card">
+            <a href="hellokitty.html" target="_blank">
+                <img src="tupian12.jpg" alt="Hello Kitty">
+                <h3>Hello Kitty</h3>
+            </a>
+            </div>
+            <div class="character-card">
+            <a href="kuluomi.html" target="_blank">
+                <img src="tupian11.jpg" alt="库洛米">
+                <h3>库洛米</h3>
+            </a>
+            </div>
+            <div class="character-card">
+             <a href="meiledi.html" target="_blank">
+                <img src="tupian10.jpg" alt="美乐蒂">
+                <h3>美乐蒂</h3>
+            </a>
+            </div>
+            <div class="character-card">
+            <a href="daergou.html" target="_blank">
+                <img src="tupian13.jpg" alt="大耳狗">
+                <h3>大耳狗</h3>
+            </a>
+            </div>
+            <div class="character-card">
+            <a href="budinggou.html" target="_blank">
+                <img src="tupian14.jpg" alt="布丁狗">
+                <h3>布丁狗</h3>
+            </a>
+            </div>
+            <div class="character-card">
+            <a href="paqiagou.html" target="_blank">
+                <img src="tupian15.jpg" alt="帕恰狗">
+                <h3>帕恰狗</h3>
+            </a>
+            </div>
+            <div class="character-card">
+            <a href="dayanwa.html" target="_blank">
+                <img src="tupian16.jpg" alt="大眼蛙">
+                <h3>大眼蛙</h3>
+            </a>
+            </div>
+            <div class="character-card">
+            <a href="shuangzi.html" target="_blank">
+                <img src="tupian26.jpg" alt="双子星">
+                <h3>双子星</h3>
+            </a>
+            </div>
+            <div class="character-card">
+            <a href="banyu.html" target="_blank">
+                <img src="tupian23.jpg" alt="半鱼人">
+                <h3>半鱼人</h3>
+            </a>
+            </div>
+            <div class="character-card">
+            <a href="qie.html" target="_blank">
+                <img src="tupian24.jpg" alt="山姆企鹅">
+                <h3>山姆企鹅</h3>
+            </a>
+            </div>
+            <div class="character-card">
+            <a href="bkya.html" target="_blank">
+                <img src="tupian17.jpg" alt="贝克鸭">
+                <h3>贝克鸭</h3>
+            </a>
+            </div>
+            <div class="character-card">
+            <a href="kuqie.html" target="_blank">
+                <img src="tupian25.jpg" alt="酷企鹅">
+                <h3>酷企鹅</h3>
+            </a>
+            </div>
+            <div class="character-card">
+            <a href="huaxiao.html" target="_blank">
+                <img src="tupian21.jpg" alt="花小兔">
+                <h3>花小兔</h3>
+            </a>
+            </div>
+            <div class="character-card">
+            <a href="banuo.html" target="_blank">
+                <img src="tupian18.jpg" alt="必爱诺">
+                <h3>必爱诺</h3>
+            </a>
+            </div>
+            <div class="character-card">
+            <a href="xytu.html" target="_blank">
+                <img src="tupian22.jpg" alt="许愿兔">
+                <h3>许愿兔</h3>
+            </a>
+            </div>
+            <div class="character-card">
+            <a href="qiaomi.html" target="_blank">
+                <img src="tupian19.jpg" alt="俏咪">
+                <h3>俏咪</h3>
+            </a>
+            </div>
+            <div class="character-card"> 
+            <a href="bbtu.html" target="_blank">
+                <img src="tupian20.jpg" alt="蹦蹦兔">
+                <h3>蹦蹦兔</h3>
+            </a>
+            </div>
+        </div>
+    </div>
+</div>
+<button class="back-to-top" id="backToTop">↑</button>
+<script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
+<script>
+    var swiper = new Swiper(".mySwiper", {
+        loop: true,
+        autoplay: {
+            delay: 3000,
+            disableOnInteraction: false,
+        },
+        pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+        },
+        navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+        },
+    });
+</script>
+</body>
+</html>
